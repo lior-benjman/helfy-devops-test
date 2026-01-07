@@ -112,8 +112,3 @@ The UI lets you:
 - Add new flowers through a form. Successful submissions append the row to the list immediately.
 - Login using the default credentials (`Admin@helfy.com` / `helfy123!` from `.env.example`) before performing any API calls. Tokens are stored in `localStorage` and automatically attached to each request.
 
-## Deployment / Next steps
-
-- Containerize the `server` and `client` directories separately or serve the static build from Express.
-- Add auth or validation middleware if the API will be exposed on the public internet.
-- Configure CI to run `npm test`/`npm run build` once tests are introduced.
