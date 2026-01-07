@@ -1,0 +1,31 @@
+CREATE DATABASE IF NOT EXISTS flowershop;
+USE flowershop;
+
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  display_name VARCHAR(120) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tokens (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  token CHAR(64) NOT NULL UNIQUE,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_tokens_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS flowers (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(120) NOT NULL,
+  color VARCHAR(60) NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO users (email, password_hash, display_name)
+VALUES ('admin@helfy.com', '$2b$10$7EAQBdX4LpieY/sIO7TRi.SqlJkJ6JOKAVeNoJDoYxAsAkNG.nYAK', 'Helfy Admin')
+ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), display_name = VALUES(display_name);

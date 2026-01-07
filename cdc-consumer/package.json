@@ -9,5 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "log4js": "^6.9.1"
+  }
 }
