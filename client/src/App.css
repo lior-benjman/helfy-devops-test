@@ -1,0 +1,253 @@
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+header {
+  text-align: center;
+}
+
+.user-banner {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 15px 35px rgba(16, 42, 67, 0.15);
+  flex-wrap: wrap;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #102a43;
+}
+
+.user-email {
+  margin: 0.2rem 0 0;
+  color: #627d98;
+  font-size: 0.95rem;
+}
+
+.logout-button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  background: #ef4444;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.logout-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.85rem;
+  color: #65748b;
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #102a43;
+}
+
+.subtitle {
+  color: #4f5d75;
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.panel {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 20px 60px rgba(16, 42, 67, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panel-header h2 {
+  margin: 0;
+  color: #102a43;
+}
+
+.panel-header p {
+  margin: 0.25rem 0 0;
+  color: #6c7a89;
+}
+
+.panel-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panel-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #243b53;
+  font-size: 0.95rem;
+}
+
+.panel-form input {
+  border-radius: 10px;
+  border: 1px solid #d9e2ec;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background-color: #f7fafc;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.panel-form input:focus {
+  border-color: #6264ff;
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(98, 100, 255, 0.15);
+}
+
+.panel-form button {
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #7f5af0, #2cb67d);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.panel-form button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.panel-form button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(127, 90, 240, 0.25);
+}
+
+.message {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.message.success {
+  background: #e6fffa;
+  color: #0f766e;
+}
+
+.message.error {
+  background: #ffe8e6;
+  color: #c81e1e;
+}
+
+.info {
+  color: #6c7a89;
+  font-size: 0.95rem;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.list-row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.row-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #102a43;
+}
+
+.row-meta {
+  margin: 0.1rem 0 0;
+  color: #627d98;
+  font-size: 0.95rem;
+}
+
+.row-date {
+  margin: 0;
+  color: #829ab1;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .list-row {
+    flex-direction: column;
+  }
+
+  .row-date {
+    text-align: left;
+  }
+}
+
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f7f9fc 0%, #eef2ff 60%, #f8f4ff 100%);
+}
+
+.login-panel {
+  width: min(420px, 100%);
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 30px 70px rgba(16, 42, 67, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+}
+
+.login-panel h1 {
+  margin: 0;
+  font-size: 1.9rem;
+  color: #102a43;
+}
