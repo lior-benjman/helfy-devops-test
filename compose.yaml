@@ -1,0 +1,167 @@
+name: helfy-stack
+
+services:
+  web:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    environment:
+      VITE_API_BASE_URL: http://api:4001/api
+    ports:
+      - "5173:4173"
+    networks:
+      - helfy-net
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    env_file:
+      - server/.env
+    environment:
+      TIDB_HOST: tidb
+      TIDB_PORT: 4000
+      TIDB_USE_SSL: "false"
+      TIDB_STRICT_SSL: "false"
+      ALLOWED_ORIGINS: http://localhost:5173
+    depends_on:
+      - tidb
+    ports:
+      - "4001:4001"
+    networks:
+      - helfy-net
+
+  pd:
+    image: pingcap/pd:v7.5.0
+    command:
+      - --name=pd
+      - --data-dir=/data/pd
+      - --client-urls=http://0.0.0.0:2379
+      - --peer-urls=http://0.0.0.0:2380
+      - --initial-cluster=pd=http://pd:2380
+      - --log-file=
+    ports:
+      - "2379:2379"
+    volumes:
+      - pd-data:/data/pd
+    networks:
+      - helfy-net
+
+  tikv:
+    image: pingcap/tikv:v7.5.0
+    command:
+      - --addr=0.0.0.0:20160
+      - --status-addr=0.0.0.0:20180
+      - --pd=pd:2379
+      - --log-file=
+    depends_on:
+      - pd
+    volumes:
+      - tikv-data:/data/tikv
+    networks:
+      - helfy-net
+
+  tidb:
+    image: pingcap/tidb:v7.5.0
+    command:
+      - --store=tikv
+      - --path=pd:2379
+      - --log-file=
+      - --advertise-address=tidb
+    depends_on:
+      - pd
+      - tikv
+    ports:
+      - "4000:4000"
+      - "10080:10080"
+    networks:
+      - helfy-net
+
+  ticdc:
+    image: pingcap/ticdc:v7.5.0
+    command:
+      - server
+      - --pd=pd:2379
+      - --addr=0.0.0.0:8300
+      - --advertise-addr=ticdc:8300
+    depends_on:
+      - pd
+      - tikv
+      - tidb
+    ports:
+      - "8300:8300"
+    networks:
+      - helfy-net
+
+  ticdc-task:
+    image: pingcap/ticdc:v7.5.0
+    depends_on:
+      - ticdc
+      - kafka
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      sleep 10 &&
+      (cdc cli changefeed create
+        --server=http://ticdc:8300
+        --changefeed-id=flowershop-cdc
+        --sink-uri="kafka://kafka:9092/flowershop_cdc?protocol=canal-json"
+      || true)
+    networks:
+      - helfy-net
+    restart: "no"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.3
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-log:/var/lib/zookeeper/log
+    networks:
+      - helfy-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.3
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - helfy-net
+
+  cdc-consumer:
+    build:
+      context: ./cdc-consumer
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_TOPIC: flowershop_cdc
+    networks:
+      - helfy-net
+
+networks:
+  helfy-net:
+
+volumes:
+  pd-data:
+  tikv-data:
+  zookeeper-data:
+  zookeeper-log:
+  kafka-data:
