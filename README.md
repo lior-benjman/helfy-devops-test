@@ -119,6 +119,7 @@ curl -X POST http://localhost:4001/api/flowers \
 
 - `ticdc` streams every TiDB change into Kafka topic `flowershop_cdc` using the Canal JSON protocol.
 - `cdc-consumer` prints each message as a structured JSON log (timestamp, action, payload metadata).
+- The API itself also tails the same Kafka topic (kafkajs + log4js) so `docker compose logs api` shows both login activity and CDC events.
 - Login attempts are logged via log4js with IP + user info so operations can audit activity.
 - All source files include explanatory comments referencing architecture/intent, per the assignment instructions.
 

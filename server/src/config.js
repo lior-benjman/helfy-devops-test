@@ -32,4 +32,11 @@ module.exports = {
       name: process.env.DEFAULT_USER_NAME || 'Demo Florist',
     },
   },
+  cdc: {
+    brokers: parseList(process.env.KAFKA_BROKERS || 'kafka:9092'),
+    topic: process.env.KAFKA_TOPIC || 'flowershop_cdc',
+    groupId: process.env.KAFKA_CONSUMER_GROUP || 'flowershop-cdc-api',
+    enabled: process.env.ENABLE_CDC_LOGS !== 'false',
+    retryMs: Number(process.env.CDC_CONSUMER_RETRY_MS) || 5000,
+  },
 };

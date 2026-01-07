@@ -5,6 +5,7 @@ const { initDb, ping } = require('./db');
 const flowersRouter = require('./routes/flowers');
 const authRouter = require('./routes/auth');
 const requireAuth = require('./middleware/requireAuth');
+const { startCdcConsumerWithRetry } = require('./cdc');
 
 // Bootstraps the API: make sure TiDB is reachable before exposing HTTP endpoints.
 async function bootstrap() {
@@ -49,6 +50,9 @@ async function bootstrap() {
   app.listen(config.port, () => {
     console.log(`API server running on http://localhost:${config.port}`);
   });
+
+  // Kick off the CDC consumer so DB changes are logged alongside API events.
+  startCdcConsumerWithRetry();
 }
 
 bootstrap();
