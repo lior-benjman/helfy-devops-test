@@ -138,6 +138,7 @@ services:
       - helfy-net
 
   kafka:
+    container_name: kafka
     image: confluentinc/cp-kafka:7.5.3
     depends_on:
       - zookeeper

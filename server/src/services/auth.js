@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const config = require('../config');
 const { query } = require('../db');
 
+// Dedicated auth helpers keep the route file thin and easier to follow.
+
 // Fetches a user by email (emails are stored lowercase for consistency).
 async function findUserByEmail(email) {
   if (!email) return null;

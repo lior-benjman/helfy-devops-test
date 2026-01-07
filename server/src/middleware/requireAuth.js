@@ -1,5 +1,7 @@
 const { getUserForToken } = require('../services/auth');
 
+// Middleware module centralizes token validation logic for any protected route.
+
 // Express middleware that validates bearer tokens and attaches the user to the request.
 async function requireAuth(req, res, next) {
   try {

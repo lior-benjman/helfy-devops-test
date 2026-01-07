@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import './App.css';
 
+// Normalizes the API base URL so fetch calls can safely concatenate paths.
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001/api').replace(
   /\/$/,
   '',
 );
 
+// Canonical shapes for form and auth state so resets stay consistent.
 const initialFormState = {
   name: '',
   color: '',
@@ -20,6 +22,7 @@ const initialAuthState = {
 
 const STORAGE_KEY = 'flowershop_auth';
 
+// Hydrates previously stored login information from localStorage across reloads.
 const readStoredAuth = () => {
   if (typeof window === 'undefined') {
     return initialAuthState;
@@ -34,6 +37,7 @@ const readStoredAuth = () => {
 };
 
 function App() {
+  // Application state split by concerns (inventory, auth, login form UX, etc.).
   const [flowers, setFlowers] = useState([]);
   const [form, setForm] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
@@ -45,9 +49,11 @@ function App() {
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
 
+  // Derived helpers let render logic stay readable.
   const isAuthenticated = Boolean(auth.token);
   const hasFlowers = useMemo(() => flowers.length > 0, [flowers]);
 
+  // Syncs auth details to localStorage whenever login/logout happens.
   const persistAuth = useCallback((payload) => {
     setAuth(payload);
     if (typeof window === 'undefined') {
@@ -61,10 +67,12 @@ function App() {
   }, []);
 
   const clearAuth = useCallback(() => {
+    // Resetting also wipes the cached flowers so stale data never flashes.
     persistAuth(initialAuthState);
     setFlowers([]);
   }, [persistAuth]);
 
+  // Pulls the latest flowers list for authenticated users.
   const fetchFlowers = useCallback(async () => {
     if (!auth.token) return;
     setLoading(true);
@@ -92,6 +100,7 @@ function App() {
   }, [auth.token, clearAuth]);
 
   useEffect(() => {
+    // Whenever the token changes (login/logout), re-query the backend.
     if (auth.token) {
       fetchFlowers();
     } else {
@@ -104,6 +113,7 @@ function App() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handles create-flower submissions after validating price/name fields.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!auth.token) {
@@ -158,6 +168,7 @@ function App() {
     setLoginForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Validates credentials client-side, then hits the /auth/login endpoint.
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
     setLoginError('');
@@ -212,6 +223,7 @@ function App() {
   };
 
   if (!isAuthenticated) {
+    // Logged-out view focuses solely on credential entry.
     return (
       <main className="auth-screen">
         <section className="login-panel">
@@ -255,6 +267,7 @@ function App() {
     );
   }
 
+  // Authenticated view shows catalog management UI.
   return (
     <main className="app">
       <header>

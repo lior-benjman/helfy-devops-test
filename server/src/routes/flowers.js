@@ -3,6 +3,7 @@ const { query } = require('../db');
 
 const router = express.Router();
 
+// Returns the newest flowers first so the UI can show recent inventory activity.
 router.get('/', async (req, res, next) => {
   try {
     const flowers = await query(
@@ -16,6 +17,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// Persists a new flower record into TiDB after basic validation.
 router.post('/', async (req, res, next) => {
   const { name, color, price } = req.body;
   if (!name || !color || price === undefined) {

@@ -2,6 +2,8 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const config = require('./config');
 
+// Wraps all TiDB connectivity plus schema seeding in one place for easy maintenance.
+
 // Single MySQL/TiDB pool reused throughout the app to avoid repeated connection churn.
 const pool = mysql.createPool({
   host: config.db.host,

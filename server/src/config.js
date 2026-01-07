@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 
+// Loads environment variables early so all downstream modules see consistent config.
 dotenv.config();
 
 // Splits comma-separated env strings into sanitized arrays (used for CORS origins).
@@ -9,6 +10,7 @@ const parseList = (value = '') =>
     .map((item) => item.trim())
     .filter(Boolean);
 
+// Centralizes every tunable knob for the API to avoid scattering process.env reads.
 module.exports = {
   port: Number(process.env.PORT) || 4001,
   corsOrigins: parseList(process.env.ALLOWED_ORIGINS),

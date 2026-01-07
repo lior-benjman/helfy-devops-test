@@ -6,6 +6,7 @@ const flowersRouter = require('./routes/flowers');
 const authRouter = require('./routes/auth');
 const requireAuth = require('./middleware/requireAuth');
 
+// Bootstraps the API: make sure TiDB is reachable before exposing HTTP endpoints.
 async function bootstrap() {
   try {
     await initDb();
@@ -17,6 +18,7 @@ async function bootstrap() {
 
   const app = express();
 
+  // Enforces the assignment's origin restrictions when the list is provided.
   const corsOptions = config.corsOrigins.length
     ? { origin: config.corsOrigins, credentials: true }
     : undefined;
@@ -24,6 +26,7 @@ async function bootstrap() {
   app.use(cors(corsOptions));
   app.use(express.json());
 
+  // Simple readiness probe so Docker/monitors can confirm TiDB connectivity.
   app.get('/api/health', async (req, res) => {
     try {
       await ping();
@@ -33,9 +36,11 @@ async function bootstrap() {
     }
   });
 
+  // Wires public auth endpoints and locks flowers CRUD behind the auth middleware.
   app.use('/api/auth', authRouter);
   app.use('/api/flowers', requireAuth, flowersRouter);
 
+  // Fallback error handler keeps stack traces off the wire but logs server issues.
   app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ message: 'Unexpected server error' });
